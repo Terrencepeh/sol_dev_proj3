@@ -1,0 +1,12 @@
+FROM python:3.8-slim
+
+WORKDIR /app
+
+# Copy the local script to the container
+COPY scripts/inference.py /app/inference.py
+
+# Install necessary Python packages
+RUN pip install pandas joblib scikit-learn
+
+# Run the inference script
+CMD ["python", "inference.py"]
