@@ -1,0 +1,12 @@
+FROM python:3.8-slim
+
+WORKDIR /app
+
+# Copy the local script to the container
+COPY scripts/train.py /app/train.py
+
+# Install necessary Python packages
+RUN pip install pandas scikit-learn joblib
+
+# Run the train script
+CMD ["python", "train.py"]
