@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: optimization-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: optimization-app
+  template:
+    metadata:
+      labels:
+        app: optimization-app
+    spec:
+      containers:
+      - name: optimization-container
+        image: terrence123peh/optimization-image:latest
+        volumeMounts:
+        - name: model-storage
+          mountPath: /data
+        # The optimization script should run automatically if CMD is set in Dockerfile
+      initContainers:
+      - name: init-models
+        image: busybox
+        command: ['sh', '-c', 'cp /source/train-data.csv /data/']
+        volumeMounts:
+        - name: model-storage
+          mountPath: /data
+        - name: source-storage
+          mountPath: /source
+      volumes:
+      - name: model-storage
+        persistentVolumeClaim:
+          claimName: model-pvc
+      - name: source-storage
+        hostPath:
+          path: /mnt/data  # Path inside Minikube VM or Kubernetes Node
+          type: Directory
