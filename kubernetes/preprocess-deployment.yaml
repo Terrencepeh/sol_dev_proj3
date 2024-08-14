@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: preprocess-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: preprocess-app
+  template:
+    metadata:
+      labels:
+        app: preprocess-app
+    spec:
+      containers:
+      - name: preprocess-container
+        image: terrence123peh/preprocess-image:latest
+        volumeMounts:
+        - name: my-storage
+          mountPath: /data
+        # The script should run automatically if CMD is set in Dockerfile
+      initContainers:
+      - name: init-data
+        image: busybox
+        command: ['sh', '-c', 'cp /source/iris.csv /data/']
+        volumeMounts:
+        - name: my-storage
+          mountPath: /data
+        - name: source-storage
+          mountPath: /source
+      volumes:
+      - name: my-storage
+        persistentVolumeClaim:
+          claimName: my-pvc
+      - name: source-storage
+        hostPath:
+          path: /mnt/data  # Path inside Minikube VM
+          type: Directory

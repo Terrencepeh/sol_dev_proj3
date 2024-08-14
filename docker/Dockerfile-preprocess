@@ -1,0 +1,14 @@
+# Use the official Python image as the base image
+FROM python:3.8-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the local script to the container
+COPY scripts/preprocess.py /app/preprocess.py
+
+# Install necessary Python packages
+RUN pip install pandas scikit-learn
+
+# Set the command to run the script
+CMD ["python", "preprocess.py"]
